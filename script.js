@@ -15,27 +15,46 @@ var puppyListModule = (function() {
         name: $el.serializeArray()[0].value,
         breed_id: $el.serializeArray()[1].value
       };
-      console.log(formData);
-      //console.log(JSON.stringify(formData));
       createPuppy(formData);
+    });
+
+    $("#puppy-list").on("click", "a", function( e ) {
+      var id = Number($(e.target).attr("id").slice(1));
+      removePuppy(id);
     });
   };
 
   var createPuppy = function(formData) {
     //console.log(formData);
-    $.ajax({
+    var puppy = $.ajax({
       url: "https://ajax-puppies.herokuapp.com/puppies.json",
       method: "POST",
       data: JSON.stringify( formData ),
       dataType: "json",
       contentType: "application/json",
       headers:  { 'Content-Type': 'application/json' },
+      success: function(event) {
+        addToPuppyList(event.id, formData.name, breedList[formData.breed_id], new Date());
+      },
+      error: function(event) {
+        console.log("didn't create puppy");
+      },
+      complete: function(event) {
+        console.log("complete");
+      }
+    });
+  };
+
+  var removePuppy = function(id) {
+    $.ajax({
+      url: 'https://ajax-puppies.herokuapp.com/puppies/' + id + '.json',
+      method: "DELETE",
       success: function() {
-        console.log("created puppy");
-        addToPuppyList(formData.name, breedList[formData.breed_id], new Date());
+        $("#p" + id).parent().remove();
+        console.log("adopted puppy");
       },
       error: function() {
-        console.log("didn't create puppy");
+        console.log("didn't adopt puppy");
       },
       complete: function() {
         console.log("complete");
@@ -64,12 +83,13 @@ var puppyListModule = (function() {
     for (var i = 0; i < jsonArray.length; i++) {
       var name = jsonArray[i].name;
       var breed = jsonArray[i].breed.name;
+      var id = jsonArray[i].id;
       var createdAt = jsonArray[i].created_at;
-      addToPuppyList(name, breed, createdAt);
+      addToPuppyList(id, name, breed, createdAt);
     }
   };
 
-  var addToPuppyList = function(name, breed, createdAt) {
+  var addToPuppyList = function(id, name, breed, createdAt) {
     var newLi,
     newA,
     $hook = $("#puppy-list");
@@ -80,6 +100,7 @@ var puppyListModule = (function() {
 
     // Create adopt link
     newA = $("<a></a>");
+    newA.attr("id", "p" + id )
     newA.text("adopt");
     newA.attr("href", "#");
 
