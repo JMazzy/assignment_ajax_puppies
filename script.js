@@ -1,5 +1,9 @@
 var puppyListModule = (function() {
-  var puppyList, ajaxPuppies, breedList = [], ajaxBreeds;
+  var puppyList,
+    ajaxPuppies,
+    breedList = [],
+    ajaxBreeds,
+    ajaxErrors;
 
   var registerEventListener = function () {
     $("#get-puppies").on("click", function(e) {
@@ -21,6 +25,37 @@ var puppyListModule = (function() {
     $("#puppy-list").on("click", "a", function( e ) {
       var id = Number($(e.target).attr("id").slice(1));
       removePuppy(id);
+    });
+
+    $(document).on("ajaxStart", function() {
+      console.log("start");
+      var $el = $("#ajax-status");
+      $el.attr("class", "hidden center");
+      $el.attr("style","");
+      $el.addClass("loading");
+      $el.text("Waiting...");
+      setTimeout(function() {
+        $el.text("Sorry this is taking so long...");
+      }, 1000);
+    });
+
+    $(document).on("ajaxSuccess", function() {
+          console.log("success");
+      var $el = $("#ajax-status");
+      $el.attr("class", "hidden center");
+      $el.attr("style","");
+      $el.addClass("success");
+      $el.text("Finished!");
+      $el.fadeOut(2000);
+    });
+
+    $(document).on("ajaxError", function(e) {
+          console.log("error");
+      var $el = $("#ajax-status");
+      $el.attr("class", "hidden center");
+      $el.attr("style","");
+      $el.addClass("failure");
+      $el.fadeOut(2000);
     });
   };
 
@@ -100,7 +135,7 @@ var puppyListModule = (function() {
 
     // Create adopt link
     newA = $("<a></a>");
-    newA.attr("id", "p" + id )
+    newA.attr("id", "p" + id );
     newA.text("adopt");
     newA.attr("href", "#");
 

@@ -3,3 +3,22 @@
   margin: 0 auto;
   text-align: center;
 }
+
+.hidden {
+  visibility: hidden;
+}
+
+.loading {
+  visibility: visible;
+  background: yellow;
+}
+
+.success {
+  visibility: visible;
+  background: green;
+}
+
+.failure {
+  visibility: visible;
+  background: red;
+}
