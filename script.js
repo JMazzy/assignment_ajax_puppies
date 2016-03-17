@@ -1,5 +1,5 @@
 var puppyListModule = (function() {
-  var puppyList, jqXHR, breedList;
+  var puppyList, ajaxPuppies, breedList, ajaxBreeds;
 
   var registerEventListener = function () {
     $("#get-puppies").on("click", function(e) {
@@ -35,7 +35,7 @@ var puppyListModule = (function() {
   };
 
   var getPuppyList = function() {
-    jqXHR = $.ajax( {
+    ajaxPuppies = $.ajax( {
       url: "https://ajax-puppies.herokuapp.com/puppies.json",
       data: {},
       type: "GET",
@@ -66,15 +66,27 @@ var puppyListModule = (function() {
   };
 
   var populateBreedList = function() {
+    var jsonArray = JSON.parse(ajaxBreeds.responseText),
+      newOption,
+      $hook = $("#breed-select");
+      $hook.empty();
 
+    for (var i = 0; i < jsonArray.length; i++) {
+      // Populate each puppy entry in list
+      newOption = $("<option></option>");
+      newOption.text( "" );
+
+      // Append to DOM
+      newOption.appendTo($hook);
+    }
   };
 
   var populatePuppyList = function() {
-    var jsonArray = JSON.parse(jqXHR.responseText),
+    var jsonArray = JSON.parse(ajaxPuppies.responseText),
       newLi,
       newA,
-      hook = $("#puppy-list");
-      hook.empty();
+      $hook = $("#puppy-list");
+      $hook.empty();
 
     for (var i = 0; i < jsonArray.length; i++) {
       // Populate each puppy entry in list
@@ -88,14 +100,12 @@ var puppyListModule = (function() {
 
       // Append to DOM
       newA.appendTo(newLi);
-      newLi.appendTo(hook);
+      newLi.appendTo($hook);
     }
-
   };
 
   return {
     registerEventListener: registerEventListener,
-    jqXHR: jqXHR,
     getPuppyList: getPuppyList,
   };
 
