@@ -48,6 +48,29 @@ var puppyListModule = (function() {
     });
   };
 
+  var populatePuppyList = function() {
+    var jsonArray = JSON.parse(ajaxPuppies.responseText),
+      newLi,
+      newA,
+      $hook = $("#puppy-list");
+      $hook.empty();
+
+    for (var i = 0; i < jsonArray.length; i++) {
+      // Populate each puppy entry in list
+      newLi = $("<li></li>");
+      newLi.text( jsonArray[i].name + " (" +  jsonArray[i].breed.name + "), " + jsonArray[i].created_at + " -- " );
+
+      // Create adopt link
+      newA = $("<a></a>");
+      newA.text("adopt");
+      newA.attr("href", "#");
+
+      // Append to DOM
+      newA.appendTo(newLi);
+      newLi.appendTo($hook);
+    }
+  };
+
   var getBreedList = function() {
     breedList = $.ajax( {
       url: "https://ajax-puppies.herokuapp.com/breeds.json",
@@ -81,37 +104,16 @@ var puppyListModule = (function() {
     }
   };
 
-  var populatePuppyList = function() {
-    var jsonArray = JSON.parse(ajaxPuppies.responseText),
-      newLi,
-      newA,
-      $hook = $("#puppy-list");
-      $hook.empty();
-
-    for (var i = 0; i < jsonArray.length; i++) {
-      // Populate each puppy entry in list
-      newLi = $("<li></li>");
-      newLi.text( jsonArray[i].name + " (" +  jsonArray[i].breed.name + "), " + jsonArray[i].created_at + " -- " );
-
-      // Create adopt link
-      newA = $("<a></a>");
-      newA.text("adopt");
-      newA.attr("href", "#");
-
-      // Append to DOM
-      newA.appendTo(newLi);
-      newLi.appendTo($hook);
-    }
-  };
-
   return {
     registerEventListener: registerEventListener,
     getPuppyList: getPuppyList,
+    getBreedList: getBreedList,
   };
 
 })();
 
 $(document).ready(function() {
   puppyListModule.registerEventListener();
+  // puppyListModule.getBreedList();
   puppyListModule.getPuppyList();
 });
