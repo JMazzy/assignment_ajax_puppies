@@ -7,7 +7,7 @@ var puppyListModule = (function() {
       getPuppyList();
     });
 
-    $("form").on("click", "#register-puppy" function(e) {
+    $("form").on("click", "#register-puppy", function(e) {
       e.preventDefault();
       var name = $("#name").val();
       var breed = $("#breed-list").val();
@@ -21,7 +21,7 @@ var puppyListModule = (function() {
       type: "POST",
       data: JSON.stringify( { name: name, breed_id: breed } ),
       dataType: "json",
-      headers: JSON.stringify( { 'Content-Type': 'application/x-www-form-urlencoded') } ),
+      headers: JSON.stringify( { 'Content-Type': 'application/x-www-form-urlencoded' } ),
       success: function() {
         console.log("created puppy");
       },
@@ -74,6 +74,7 @@ var puppyListModule = (function() {
       newLi,
       newA,
       hook = $("#puppy-list");
+      hook.empty();
 
     for (var i = 0; i < jsonArray.length; i++) {
       // Populate each puppy entry in list
