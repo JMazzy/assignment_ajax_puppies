@@ -7,6 +7,21 @@
     <script src="script.js"></script>
   </head>
   <body>
-    
+    <h1 class="center">The AJAX Puppy Shelter</h1>
+
+    <h3>Register a new Puppy</h3>
+    <form>
+      <label for="name">Name</label>
+      <input type="text" name="name">
+      <label for="breed">Breed</label>
+      <select name="breed" id="breed-select">
+      </select>
+      <input type="submit" value="Register Puppy">
+    </form>
+
+    <h3>Our Puppies:</h3>
+    <a href="" id="get-puppies">Refresh Puppies List</a>
+    <ul id="puppy-list">
+    </ul>
   </body>
 </html>
