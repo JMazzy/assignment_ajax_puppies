@@ -11,7 +11,6 @@ var puppyListModule = (function() {
       getPuppyList();
     });
 
-
     $("form[data-ajaxremote='true']").submit( function( e ) {
       e.preventDefault();
       var $el = $( event.target );
@@ -54,6 +53,7 @@ var puppyListModule = (function() {
       var $el = $("#ajax-status");
       $el.attr("class", "hidden center");
       $el.attr("style","");
+      $el.text( ajaxErrors );
       $el.addClass("failure");
       $el.fadeOut(2000);
     });
@@ -71,8 +71,9 @@ var puppyListModule = (function() {
       success: function(event) {
         addToPuppyList(event.id, formData.name, breedList[formData.breed_id], new Date());
       },
-      error: function(event) {
+      error: function( request, status, error ) {
         console.log("didn't create puppy");
+        ajaxErrors = request.responseText;
       },
       complete: function(event) {
         console.log("complete");
@@ -88,8 +89,9 @@ var puppyListModule = (function() {
         $("#p" + id).parent().remove();
         console.log("adopted puppy");
       },
-      error: function() {
+      error: function( request, status, error ) {
         console.log("didn't adopt puppy");
+        ajaxErrors = request.responseText;
       },
       complete: function() {
         console.log("complete");
@@ -106,7 +108,10 @@ var puppyListModule = (function() {
       success: function() {
         populatePuppyList();
       },
-      error: function() { console.log("error"); },
+      error: function( request, status, error ) {
+        console.log("error");
+        ajaxErrors = request.responseText;
+      },
       complete: function() { console.log("complete"); }
     });
   };
@@ -152,8 +157,9 @@ var puppyListModule = (function() {
       success: function() {
         populateBreedList();
       },
-      error: function() {
+      error: function( request, status, error ) {
         console.log("error");
+        ajaxErrors = request.responseText;
       },
       complete: function() {
         console.log("complete");
