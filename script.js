@@ -95,11 +95,13 @@ var puppyListModule = (function() {
 
   return {
     registerEventListener: registerEventListener,
-    jqXHR: jqXHR
+    jqXHR: jqXHR,
+    getPuppyList: getPuppyList,
   };
 
 })();
 
 $(document).ready(function() {
   puppyListModule.registerEventListener();
+  puppyListModule.getPuppyList();
 });
