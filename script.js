@@ -1,5 +1,5 @@
 var puppyListModule = (function() {
-  var puppyList, ajaxPuppies, breedList, ajaxBreeds;
+  var puppyList, ajaxPuppies, breedList = [], ajaxBreeds;
 
   var registerEventListener = function () {
     $("#get-puppies").on("click", function(e) {
@@ -7,31 +7,38 @@ var puppyListModule = (function() {
       getPuppyList();
     });
 
-    $("form").on("click", "#register-puppy", function(e) {
+
+    $("form[data-ajaxremote='true']").submit( function( e ) {
       e.preventDefault();
-      var name = $("#name").val();
-      var breed = $("#breed-list").val();
-      createPuppy( name, breed );
+      var $el = $( event.target );
+      var formData = {
+        name: $el.serializeArray()[0].value,
+        breed_id: $el.serializeArray()[1].value
+      };
+      console.log(formData);
+      //console.log(JSON.stringify(formData));
+      createPuppy(formData);
     });
   };
 
-  var createPuppy = function(name,breed) {
-    $.ajax( {
-      url: 'https://ajax-puppies.herokuapp.com/puppies.json',
-      type: "POST",
-      data: JSON.stringify( { name: name, breed_id: breed } ),
-      contentType: "application/x-www-form-urlencoded",
+  var createPuppy = function(formData) {
+    //console.log(formData);
+    $.ajax({
+      url: "https://ajax-puppies.herokuapp.com/puppies.json",
+      method: "POST",
+      data: JSON.stringify( formData ),
       dataType: "json",
-      headers: JSON.stringify( { 'Content-Type': 'application/x-www-form-urlencoded' } ),
+      contentType: "application/json",
+      headers:  { 'Content-Type': 'application/json' },
       success: function() {
         console.log("created puppy");
-        addToPuppyList(name, breed, new Date());
+        addToPuppyList(formData.name, breedList[formData.breed_id], new Date());
       },
       error: function() {
-        console.log("didn't create puppy")
+        console.log("didn't create puppy");
       },
       complete: function() {
-        console.log("complete")
+        console.log("complete");
       }
     });
   };
@@ -51,7 +58,7 @@ var puppyListModule = (function() {
   };
 
   var populatePuppyList = function() {
-    var jsonArray = JSON.parse(ajaxPuppies.responseText)
+    var jsonArray = JSON.parse(ajaxPuppies.responseText);
     $("#puppy-list").empty();
 
     for (var i = 0; i < jsonArray.length; i++) {
@@ -78,8 +85,8 @@ var puppyListModule = (function() {
 
     // Append to DOM
     newA.appendTo(newLi);
-    newLi.appendTo($hook);
-  }
+    newLi.prependTo($hook);
+  };
 
   var getBreedList = function() {
     ajaxBreeds = $.ajax( {
@@ -95,7 +102,7 @@ var puppyListModule = (function() {
       complete: function() {
         console.log("complete");
       }
-    })
+    });
   };
 
   var populateBreedList = function() {
@@ -107,9 +114,9 @@ var puppyListModule = (function() {
     for (var i = 0; i < jsonArray.length; i++) {
       // Populate each puppy entry in list
       newOption = $("<option></option>");
-      newOption.val( jsonArray[i]["id"] );
-      newOption.text( jsonArray[i]["name"] );
-
+      newOption.val( jsonArray[i].id );
+      newOption.text( jsonArray[i].name );
+      breedList[jsonArray[i].id] = jsonArray[i].name;
       // Append to DOM
       newOption.appendTo($hook);
     }
